@@ -33,7 +33,7 @@ Copy `.env.example` into `.env` and configure database credentials
 10. Run `npm run dev` to start vite server for React
 
 # Email setup
-Go to .env file fillpu below information:
+Go to .env file fillup below information:
 Please here [documentation..](https://support.google.com/accounts/answer/185833?hl=en)
 ```MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com

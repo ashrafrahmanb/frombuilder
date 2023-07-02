@@ -85,18 +85,18 @@ class AuthController extends Controller
         $currentTime = microtime();
         $checkOtp = User::where('email', $credentials['email'])->where('otp_code', $credentials['otp_code'])->first();
         if($checkOtp){
-            //if(microtime($checkOtp->otp_time) <= $currentTime){
+            if(microtime($checkOtp->otp_time) <= $currentTime){
                 $token = $checkOtp->createToken('main')->plainTextToken;
 
                 return response([
                     'user' => $checkOtp,
                     'token' => $token
                 ]);
-            // }else{
-            //     return response([
-            //         'error' => 'Activation code is time out!'
-            //     ], 422);
-            // }
+            }else{
+                return response([
+                    'error' => 'Activation code is time out!'
+                ], 422);
+            }
         }else{
             return response([
                 'error' => 'The Provided credentials are not correct'
@@ -112,18 +112,18 @@ class AuthController extends Controller
         $currentTime = microtime();
         $checkData = User::where('email', $data['email'])->where('otp_code', $data['otp_code'])->first();
         if($checkData){
-            //if(microtime($checkOtp->otp_time) <= $currentTime){
+            if(microtime($checkOtp->otp_time) <= $currentTime){
                 $token = $checkData->createToken('main')->plainTextToken;
                 User::where('email', $data['email'])->update(['email_verified_at' => date('Y-m-d H:i:s')]);
                 return response([
                     'user' => $checkData,
                     'token' => $token
                 ]);
-            // }else{
-            //     return response([
-            //         'error' => 'Activation code is time out!'
-            //     ], 422);
-            // }
+            }else{
+                return response([
+                    'error' => 'Activation code is time out!'
+                ], 422);
+            }
         }else{
             return response([
                 'error' => 'The Provided credentials are not correct'
