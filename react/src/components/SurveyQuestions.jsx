@@ -1,46 +1,53 @@
-import {PlusIcon} from "@heroicons/react/24/outline";
-import {useEffect} from "react";
-import {useState} from "react";
-import {v4 as uuidv4} from "uuid";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { useEffect } from "react";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import QuestionEditor from "./QuestionEditor";
+import { useStateContext } from "../contexts/ContextProvider";
 
-export default function SurveyQuestions({questions, onQuestionsUpdate}) {
+export default function SurveyQuestions({ questions, onQuestionsUpdate }) {
   const [myQuestions, setMyQuestions] = useState([...questions]);
+  const { showToast } = useStateContext();
 
   const addQuestion = (index) => {
-    index = index !== undefined ? index : myQuestions.length
+    console.log(myQuestions.length);
+    if (myQuestions.length > 9) {
+      showToast("Maximum 10 question allow!");
+      return true;
+    }
+    index = index !== undefined ? index : myQuestions.length;
     myQuestions.splice(index, 0, {
       id: uuidv4(),
       type: "text",
       question: "",
       description: "",
       data: {},
-    })
+    });
     setMyQuestions([...myQuestions]);
-    onQuestionsUpdate(myQuestions)
+    onQuestionsUpdate(myQuestions);
   };
 
   const questionChange = (question) => {
     if (!question) return;
     const newQuestions = myQuestions.map((q) => {
       if (q.id == question.id) {
-        return {...question};
+        return { ...question };
       }
       return q;
     });
     setMyQuestions(newQuestions);
-    onQuestionsUpdate(newQuestions)
+    onQuestionsUpdate(newQuestions);
   };
 
   const deleteQuestion = (question) => {
     const newQuestions = myQuestions.filter((q) => q.id !== question.id);
 
     setMyQuestions(newQuestions);
-    onQuestionsUpdate(newQuestions)
+    onQuestionsUpdate(newQuestions);
   };
 
   useEffect(() => {
-    setMyQuestions(questions)
+    setMyQuestions(questions);
   }, [questions]);
 
   return (
@@ -52,7 +59,7 @@ export default function SurveyQuestions({questions, onQuestionsUpdate}) {
           className="flex items-center text-sm py-1 px-4 rounded-sm text-white bg-gray-600 hover:bg-gray-700"
           onClick={() => addQuestion()}
         >
-          <PlusIcon className="w-4 mr-2"/>
+          <PlusIcon className="w-4 mr-2" />
           Add question
         </button>
       </div>
