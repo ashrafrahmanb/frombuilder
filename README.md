@@ -10,7 +10,7 @@ Project is created with:
 * tailwindcss v3.2.4
 
 # User Features
-* Registration and login with email `OTP`.
+* Registration(`Password min(8) symbols, at least 1 camelCase, number`) and login with email `OTP`.
 * A dedicated page where user can create dynamic form and public `URL` for providing the end user.
 * Survey `edit` and `delete` options.
 * Every user can fillup the required fields and submit the information.
