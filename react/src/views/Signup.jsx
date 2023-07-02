@@ -27,7 +27,7 @@ export default function Signup() {
       .catch((error) => {
         const response = error.response;
         if (response && response.status === 422) {
-          setError(response.data.error);
+          setError(response.data.errors);
         }
       });
   };
@@ -48,7 +48,11 @@ export default function Signup() {
       </p>
 
       {error && (
-        <div className="bg-red-500 rounded py-2 px-3 text-white">{error}</div>
+        <div className="bg-red-500 rounded py-2 px-3 text-white">
+          {Object.keys(error).map((key) => (
+            <p key={key}>{error[key][0]}</p>
+          ))}
+        </div>
       )}
 
       <form
