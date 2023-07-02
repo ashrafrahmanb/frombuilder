@@ -2,20 +2,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { LockClosedIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import axiosClient from "../axios.js";
-//import { useStateContext } from "../contexts/ContextProvider.jsx";
 
 export default function Signup() {
   const navigate = useNavigate();
-  //const { setCurrentUser, setUserToken } = useStateContext();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [error, setError] = useState({ __html: "" });
+  const [error, setError] = useState(null);
 
   const onSubmit = (ev) => {
     ev.preventDefault();
-    setError({ __html: "" });
 
     axiosClient
       .post("/signup", {
@@ -26,19 +23,12 @@ export default function Signup() {
       })
       .then(({ data }) => {
         navigate(`/account-verify?email=${email}`);
-        // setCurrentUser(data.user)
-        // setUserToken(data.token)
       })
       .catch((error) => {
-        if (error.response) {
-          const finalErrors = Object.values(error.response.data.errors).reduce(
-            (accum, next) => [...accum, ...next],
-            []
-          );
-          console.log(finalErrors);
-          setError({ __html: finalErrors.join("<br>") });
+        const response = error.response;
+        if (response && response.status === 422) {
+          setError(response.data.error);
         }
-        console.error(error);
       });
   };
 
@@ -57,11 +47,8 @@ export default function Signup() {
         </Link>
       </p>
 
-      {error.__html && (
-        <div
-          className="bg-red-500 rounded py-2 px-3 text-white"
-          dangerouslySetInnerHTML={error}
-        ></div>
+      {error && (
+        <div className="bg-red-500 rounded py-2 px-3 text-white">{error}</div>
       )}
 
       <form

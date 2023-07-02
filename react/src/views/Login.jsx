@@ -2,38 +2,28 @@ import { LockClosedIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosClient from "../axios";
-//import { useStateContext } from "../contexts/ContextProvider";
 
 export default function Login() {
   const navigate = useNavigate();
-  //const { setCurrentUser, setUserToken } = useStateContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState({ __html: "" });
+  const [error, setError] = useState(null);
 
   const onSubmit = (ev) => {
     ev.preventDefault();
-    setError({ __html: "" });
-
     axiosClient
       .post("/login", {
         email,
         password,
       })
       .then(({ data }) => {
-        navigate(`/otp_verified?email=${email}`);
-        // setCurrentUser(data.user);
-        // setUserToken(data.token);
+        navigate(`/otp-verify?email=${email}`);
       })
       .catch((error) => {
-        if (error.response) {
-          const finalErrors = Object.values(error.response.data.errors).reduce(
-            (accum, next) => [...accum, ...next],
-            []
-          );
-          setError({ __html: finalErrors.join("<br>") });
+        const response = error.response;
+        if (response && response.status === 422) {
+          setError(response.data.error);
         }
-        console.error(error);
       });
   };
 
@@ -42,21 +32,8 @@ export default function Login() {
       <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
         Sign in to your account
       </h2>
-      <p className="mt-2 text-center text-sm text-gray-600">
-        Or{" "}
-        <Link
-          to="/signup"
-          className="font-medium text-indigo-600 hover:text-indigo-500"
-        >
-          signup for free
-        </Link>
-      </p>
-
-      {error.__html && (
-        <div
-          className="bg-red-500 rounded py-2 px-3 text-white"
-          dangerouslySetInnerHTML={error}
-        ></div>
+      {error && (
+        <div className="bg-red-500 rounded py-2 px-3 text-white">{error}</div>
       )}
 
       <form
@@ -132,6 +109,15 @@ export default function Login() {
             Sign in
           </button>
         </div>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Not registered?{" "}
+          <Link
+            to="/signup"
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
+            signup
+          </Link>
+        </p>
       </form>
     </>
   );

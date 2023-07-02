@@ -57,8 +57,13 @@ class AuthController extends Controller
                 'error' => 'The Provided credentials are not correct'
             ], 422);
         }
-        $otp_code = rand(100000, 999999);
         $user = Auth::user();
+        if(empty($user->email_verified_at) || $user->email_verified_at==null){
+            return response([
+                'error' => 'Your account is not verified.'
+            ], 422);
+        }
+        $otp_code = rand(100000, 999999);
         $mailData = [
             'title' => 'Login Activation Code',
             'body' => 'This is for account login activation code',
@@ -81,20 +86,22 @@ class AuthController extends Controller
     public function otpLoginVerification(OtpVerificationRequest $request)
     {
         $credentials = $request->validated();
-
-        $currentTime = microtime();
+        
         $checkOtp = User::where('email', $credentials['email'])->where('otp_code', $credentials['otp_code'])->first();
         if($checkOtp){
-            if(microtime($checkOtp->otp_time) <= $currentTime){
+            //date('H:i:s')
+            if(strtotime(date('H:i:s')) <= strtotime($checkOtp->otp_time)){
                 $token = $checkOtp->createToken('main')->plainTextToken;
 
                 return response([
                     'user' => $checkOtp,
-                    'token' => $token
+                    'token' => $token,
+                    'time' => date('H:i:s'),
                 ]);
             }else{
                 return response([
-                    'error' => 'Activation code is time out!'
+                    'error' => 'Activation code is time out!',
+                    'time' => date('H:i:s'),
                 ], 422);
             }
         }else{
@@ -109,10 +116,9 @@ class AuthController extends Controller
     {
         $data = $request->validated();
 
-        $currentTime = microtime();
         $checkData = User::where('email', $data['email'])->where('otp_code', $data['otp_code'])->first();
         if($checkData){
-            if(microtime($checkOtp->otp_time) <= $currentTime){
+            if(strtotime(date('H:i:s')) <= strtotime($checkData->otp_time)){
                 $token = $checkData->createToken('main')->plainTextToken;
                 User::where('email', $data['email'])->update(['email_verified_at' => date('Y-m-d H:i:s')]);
                 return response([

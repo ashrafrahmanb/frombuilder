@@ -7,7 +7,7 @@ import CountDown from "../components/CountDown";
 export default function Verification() {
   const { setCurrentUser, setUserToken } = useStateContext();
   const [otp_code, setOtpCode] = useState("");
-  const [error, setError] = useState({ __html: "" });
+  const [message, setMessage] = useState(null);
   const startTime = new Date();
   startTime.setMinutes(startTime.getMinutes() + 3);
   const queryParameters = new URLSearchParams(window.location.search);
@@ -15,8 +15,6 @@ export default function Verification() {
 
   const onSubmit = (ev) => {
     ev.preventDefault();
-    setError({ __html: "" });
-
     axiosClient
       .post("/otp_verified", {
         email,
@@ -26,15 +24,11 @@ export default function Verification() {
         setCurrentUser(data.user);
         setUserToken(data.token);
       })
-      .catch((error) => {
-        if (error.response) {
-          const finalErrors = Object.values(error.response.data.errors).reduce(
-            (accum, next) => [...accum, ...next],
-            []
-          );
-          setError({ __html: finalErrors.join("<br>") });
+      .catch((err) => {
+        const response = err.response;
+        if (response && response.status === 422) {
+          setMessage(response.data.error);
         }
-        console.error(error);
       });
   };
 
@@ -43,11 +37,8 @@ export default function Verification() {
       <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
         Account Activation
       </h2>
-      {error.__html && (
-        <div
-          className="bg-red-500 rounded py-2 px-3 text-white"
-          dangerouslySetInnerHTML={error}
-        ></div>
+      {message && (
+        <div className="bg-red-500 rounded py-2 px-3 text-white">{message}</div>
       )}
 
       <form
