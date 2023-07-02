@@ -31,6 +31,19 @@ Copy `.env.example` into `.env` and configure database credentials
 8. Copy `react/.env.example` into `.env` and adjust the `VITE_API_BASE_URL` parameter
 9. Run `npm install`
 10. Run `npm run dev` to start vite server for React
+
+# Email setup
+Go to .env file fillpu below information:
+Please here [documentation..](https://support.google.com/accounts/answer/185833?hl=en)
+```MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME= <You Email address>
+MAIL_PASSWORD= <App password here>
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="<You Email address>"
+MAIL_FROM_NAME="Verification Code" 
+```
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
