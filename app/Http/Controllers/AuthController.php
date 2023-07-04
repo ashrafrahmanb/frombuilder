@@ -30,7 +30,7 @@ class AuthController extends Controller
 
         $mailData = [
             'title' => 'Account Activation Code',
-            'body' => 'This is for account activation code',
+            'body' => 'A sign up attempt requires further verification because we did not recognize to you. To complete the sign up, enter the verification code on the unrecognized user.',
             'name' => $data['name'],
             'otp_code' => $otp_code,
             'footer' => 'This is for account activation code',
@@ -66,7 +66,7 @@ class AuthController extends Controller
         $otp_code = rand(100000, 999999);
         $mailData = [
             'title' => 'Login Activation Code',
-            'body' => 'A sign in attempt requires further verification because we did not recognize your device. To complete the sign in, enter the verification code on the unrecognized device.',
+            'body' => 'A sign in attempt requires further verification because we did not recognize to you. To complete the sign in, enter the verification code on the unrecognized user.',
             'name' => $user->name,
             'otp_code' => $otp_code,
             'footer' => 'Please take this code for authorized user',
